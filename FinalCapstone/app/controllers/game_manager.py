@@ -3,7 +3,7 @@ import random
 
 from app.controllers.menu_manager import MenuManager
 from app.controllers.db_manager import DatabaseManager
-from app.controllers.twtr_manager import twtr_manager
+from app.controllers.twtr_manager import twtrManager
 
 from app.models.boss import Boss
 from app.models.character import Character
@@ -21,7 +21,7 @@ class GameManager:
     def __init__(self):
         self.menu_manager = MenuManager(self)
         self.db_manager = DatabaseManager(self)
-        self.twtr_manager = twtr_manager(self)
+        self.twtr_manager = twtrManager()
         self.menu_manager.title_screen()
 
 

@@ -1,3 +1,6 @@
+from app.controllers.db_manager import DatabaseManager
+from app.controllers.twtr_manager import twtrManager
+
 1#
 #   MenuManager
 #
@@ -31,7 +34,8 @@ class MenuManager:
     #
     def __init__(self, game_manager):
         self.game_manager = game_manager
-
+        self.db_manager= DatabaseManager(self)
+        self.twtr_manager = twtrManager()
         self.menus = {
             'main_menu': [
                 ('New Game',        'new_game'), 
@@ -125,7 +129,7 @@ class MenuManager:
     def prompt(self, menu):
         while True:        
             self.write("\nEnter the number that corresponds with your choice.")
-            choice = raw_input()
+            choice = self.db_manager.popTweets()
             try:
                 int(choice)
                 self.menus[menu][int(choice) - 1]

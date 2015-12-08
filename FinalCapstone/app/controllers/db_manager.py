@@ -41,8 +41,9 @@ class DatabaseManager:
         c = conn.cursor()
 
         print("Creating database")
-
+        os.makedirs('DunSuciRun.sqlite')
         char = """ CREATE TABLE CHARACTERS (
+            PLAYER VARCHAR(255)
             NAME VARCHAR(255) NOT NULL,
             JOB VARCHAR(255) NOT NULL,
             HEALTH INT NOT NULL
@@ -120,15 +121,67 @@ class DatabaseManager:
     #
 
 
-    def storeTweets(name, text, date):
+    def storeTweets(self,name,text,date):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
-        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name, text, date))
 
         print("Adding user data to Database")
+
+        c.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
+        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name, text, 4))
+
+
+        c.execute("SELECT * FROM PLAYERS")
+        tweets = c.fetchall()
+        print("hell2o")
+        for tweet in tweets:
+            print("hell3o")
+            print(tweet)
+            # t = tweet(tweet[0], tweet[1], tweet[2])
+            # t.talk()
+
+
+
+
         conn.commit()
         conn.close()
 
+    def popTweets(self):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        t = conn.cursor()
+
+        t.execute("SELECT * FROM PLAYERS")
+        tweets = t.fetchall()
+        twt = tweets[0]
+
+        conn.commit()
+        conn.close()
+
+        print(twt)
+        return twt[0]
+
+    def checkTweets(self, name, text):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        t = conn.cursor()
+        t.execute("SELECT * FROM PLAYERS WHERE USERNAME IS" + name + "AND COMMAND IS" + text)
+        tweets = t.fetchall()
+        conn.commit()
+        conn.close()
+        if len(tweets) < 1:
+            return True
+        else:
+            return False
+    def checkUser(self, name):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        t = conn.cursor()
+        t.execute("SELECT * FROM PLAYERS WHERE USERNAME IS" + name + "AND COMMAND IS" + text)
+        tweets = t.fetchall()
+        conn.commit()
+        conn.close()
+        if len(tweets) < 1:
+            return True
+        else:
+            return False
     def test(self):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
