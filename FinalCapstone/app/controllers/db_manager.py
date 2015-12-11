@@ -41,12 +41,13 @@ class DatabaseManager:
         c = conn.cursor()
 
         print("Creating database")
-        os.makedirs('DunSuciRun.sqlite')
+
         char = """ CREATE TABLE CHARACTERS (
             PLAYER VARCHAR(255)
             NAME VARCHAR(255) NOT NULL,
             JOB VARCHAR(255) NOT NULL,
-            HEALTH INT NOT NULL
+            HEALTH INT NOT NULL,
+            GOLD INT NOT NULL,
 
         )"""
 
@@ -67,16 +68,16 @@ class DatabaseManager:
                 CHARNAME VARCHAR(255) NOT NULL,
                 STEP INT NOT NULL )"""
 
-        playerActions = """ CREATE TABLE PLAYERACTIONS (
-                USERNAME VARCHAR(255) NOT NULL,
-                COMMAND VARCHAR(255) NOT NULL,
-                DATETIME INT NOT NULL )"""
+        # playerActions = """ CREATE TABLE PLAYERACTIONS (
+        #         USERNAME VARCHAR(255) NOT NULL,
+        #         COMMAND VARCHAR(255) NOT NULL,
+        #         DATETIME INT NOT NULL )"""
 
         c.execute(char)
         c.execute(dungeons)
         c.execute(bosses)
         c.execute(players)
-        c.execute(playerActions)
+        # c.execute(playerActions)
 
         conn.commit()
         conn.close()
@@ -125,24 +126,35 @@ class DatabaseManager:
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
 
+        check = self.checkUser(name)
+        c.execute("DROP TABLE CHARACTERS")
+        char = """ CREATE TABLE CHARACTERS (
+            PLAYER VARCHAR(255) NOT NULL,
+            NAME VARCHAR(255) NOT NULL,
+            JOB VARCHAR(255) NOT NULL,
+            HEALTH INT NOT NULL,
+            GOLD INT NOT NULL
+
+        )"""
+        c.execute(char)
         print("Adding user data to Database")
-
         c.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
-        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name, text, 4))
+
+        # if (check):
+        #     print "New Character!"
+        #     self.game_manager.char_creation()
+
+        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name, text, 1))
 
 
-        c.execute("SELECT * FROM PLAYERS")
-        tweets = c.fetchall()
-        print("hell2o")
-        for tweet in tweets:
-            print("hell3o")
-            print(tweet)
-            # t = tweet(tweet[0], tweet[1], tweet[2])
-            # t.talk()
-
-
-
-
+        # c.execute("SELECT * FROM PLAYERS")
+        # tweets = c.fetchall()
+        # print("hell2o")
+        # for tweet in tweets:
+        #     print("hell3o")
+        #     print(tweet)
+        #     # t = tweet(tweet[0], tweet[1], tweet[2])
+        #     # t.talk()
         conn.commit()
         conn.close()
 
@@ -157,31 +169,31 @@ class DatabaseManager:
         conn.commit()
         conn.close()
 
-        print(twt)
-        return twt[0]
+        print(twt[2])
+        return twt[2]
 
     def checkTweets(self, name, text):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         t = conn.cursor()
-        t.execute("SELECT * FROM PLAYERS WHERE USERNAME IS" + name + "AND COMMAND IS" + text)
+        t.execute("SELECT * FROM PLAYERS WHERE USERNAME = " + name + "AND COMMAND = " + text)
         tweets = t.fetchall()
         conn.commit()
         conn.close()
-        if len(tweets) < 1:
+        if len(tweets) > 1:
             return True
         else:
             return False
     def checkUser(self, name):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         t = conn.cursor()
-        t.execute("SELECT * FROM PLAYERS WHERE USERNAME IS" + name + "AND COMMAND IS" + text)
+        t.execute("SELECT * FROM PLAYERS WHERE USERNAME =? ", (name,))
         tweets = t.fetchall()
         conn.commit()
         conn.close()
-        if len(tweets) < 1:
+        if len(tweets) > 1:
             return True
         else:
-            return False
+            return True
     def test(self):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()

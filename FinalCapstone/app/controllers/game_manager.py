@@ -95,13 +95,22 @@ class GameManager:
         else:
             nickName = "of the " + nickName + "s"
         fullName = name + " " + nickName
-        print "Your name is " + fullName
-        job = "Warrior"
-
+        gold = random.randint(1,5)
+        job = ["Warrior", "Thief","Barbarian","Warrior Priest","Knight","Paladin"]
+        youJob =  job[random.randint(1,5)]
+        health = random.randint(80,400)
+        if gold > 1:
+            print "You are " + fullName + ". You are a " + youJob + ". You begin your adventure with only " + str(gold) + " coins to your name"
+        else:
+            print "You are " + fullName + ". You are a " + youJob + ". You begin your adventure with only a single gold coin to your name"
 
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
-        c.execute('INSERT INTO CHARACTERS VALUES (?,?,?)', (fullName, job, 100))
+        p = conn.cursor()
+        p.execute("SELECT USERNAME FROM PLAYERS")
+        gett = p.fetchall()
+        userName = gett[0][0]
+        c.execute('INSERT INTO CHARACTERS VALUES (?,?,?,?,?)', (userName, fullName, youJob, health, gold))
         conn.commit()
         conn.close()
 
