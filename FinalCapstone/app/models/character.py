@@ -31,7 +31,7 @@ class Character:
         elif self.health <= x.damage:
             self.health = 0
            # self.alive = False
-            print ("You died.")
+            print ("You have perished.")
 
             conn = sqlite3.connect('DunSuciRun.sqlite')
             c = conn.cursor()

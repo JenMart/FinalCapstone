@@ -44,9 +44,9 @@ class GameManager:
     #
     def char_creation(self):
         firstHalf = "Ger Sym Hugh Ger Byssh Riff Vin Heg Gile Gau Ewl Gyl" \
-                  "Rar Helm Thu Coel Erf Cane folke Knett Leneth Dene Hav Tun Thun".split() #24
+                  "Rar Helm Thu Coel Erf Cane folke Knet Lenth Dene Hav Tun Thun".split() #24
 
-        seconHalf = "y ey te nah ney ley walt wort man der dar dor da neth ke fin son kin".split() #18
+        seconHalf = "y ey te nah ney ley walt wort man der dar dor da ness ke fin son kin".split() #18
 
         nickName1 = "Silent Horse Iron Grim Shadow Warrior Cold Queen King Prince Princess" \
                     " Mumble Quick  Flame".split() #14
@@ -99,26 +99,34 @@ class GameManager:
         job = ["Warrior", "Thief","Barbarian","Warrior Priest","Knight","Paladin"]
         youJob =  job[random.randint(1,5)]
         health = random.randint(80,400)
+        #The longest sentence possible is a max of 122 characters to avoid going over twitters char limit
         if gold > 1:
-            print "You are " + fullName + ". You are a " + youJob + ". You begin your adventure with only " + str(gold) + " coins to your name"
+            print "You are " + fullName + ". You are a " + youJob + ". You begin your adventure with only " + str(gold) + " coins."
         else:
-            print "You are " + fullName + ". You are a " + youJob + ". You begin your adventure with only a single gold coin to your name"
+            print "You're " + fullName + ". You are a " + youJob + ". You begin your adventure with only a single coin."
 
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
         p = conn.cursor()
+        ch= conn.cursor()
         p.execute("SELECT USERNAME FROM PLAYERS")
-        gett = p.fetchall()
-        userName = gett[0][0]
-        c.execute('INSERT INTO CHARACTERS VALUES (?,?,?,?,?)', (userName, fullName, youJob, health, gold))
+        getUser = p.fetchall()
+        userName = getUser[0][0]
+        ch.execute("SELECT PLAYER FROM CHARACTERS WHERE PLAYER = ?",(userName,))
+        check = ch.fetchall()
+        if len(check) > 1:
+            c.execute('INSERT INTO CHARACTERS VALUES (?,?,?,?,?)', (userName, fullName, youJob, health, gold))
+        else:
+            c.execute('UPDATE CHARACTERS SET NAME = ?, JOB = ?, HEALTH = ?,  GOLD = ? WHERE PLAYER = ?', (fullName, youJob, health, gold, userName))
+
         conn.commit()
         conn.close()
 
-        new_char = Character(fullName, job, 100)
+        new_char = Character(fullName, youJob, health)
         return new_char
 
     def continue_game(self):
-        self.menu_manager.title('Continue Game')
+        self.printTweet(self.menu_manager.title('Continue Game'))
         player = self.player_game()
         self.dungeon_pick(player)
         self.menu_manager.continue_prompt()
@@ -128,8 +136,8 @@ class GameManager:
     #   Graveyard
     #
     def scoreboard(self):
-        self.menu_manager.title('Scoreboard')
-        self.menu_manager.menu('scoreboard_menu')
+        self.printTweet(self.menu_manager.title('Scoreboard'))
+        self.printTweet(self.menu_manager.menu('scoreboard_menu'))
         self.menu_manager.title_screen()
 
     def get_report_list(self):
@@ -149,6 +157,7 @@ class GameManager:
         self.menu_manager.title('View Scoreboard')
         for i in range(len(chars)):
             self.menu_manager.write(chars[i].numbered_stats(i+1))
+
 
         self.menu_manager.continue_prompt()
 
@@ -203,41 +212,55 @@ class GameManager:
 
             try:
                 self.menu_manager.title(name.name)
-                level = input("What level of dungeon would you like? (1: easy, 2: medium, 3: hard)\n")
-                int(level)
+                level = raw_input("What level of dungeon would you like? (Easy, Medium or Hard)\n").lower()
+                print "You selected: " + level
+                self.printTweet("You selected: " + level)
+                if "easy" in level:
+                    level = 1
+                elif "medium" in level:
+                    level = 2
+                elif "hard" in level:
+                    level = 3
+                else:
+                    # self.menu_manager.write('Level not recognized. Please choose Easy, Medium or Hard.')
+                    self.printTweet('Level not recognized. Please choose Easy, Medium or Hard.')
+                    self.dungeon_pick(name)
+                useName = self.selectCurrentUser()
                 if 1 <= level <= 3:
                     conn = sqlite3.connect('DunSuciRun.sqlite')
                     c = conn.cursor()
                     m = conn.cursor()
                     n = conn.cursor()
+                    p = conn.cursor()
                     c.execute('SELECT * FROM DUNGEONS WHERE DIFFICULTY =' + str(level))
-
                     dungeons = c.fetchall()
+
 
                     randomNum= random.randint(0, len(dungeons)-1)
                     newTuple = dungeons[randomNum]
-                    dun = Dungeon(newTuple[0],newTuple[1],newTuple[2])
+                    dun = Dungeon(newTuple[0],newTuple[1],newTuple[2]) #
                     dun.sign()
-
-                    m.execute('SELECT * FROM BIGSCARIES WHERE THEME ="' + dun.theme + '"')
+                    m.execute('SELECT * FROM BIGSCARIES WHERE THEME =?',(dun.theme,))
                     monsters = m.fetchall()
                     # print (monsters)
                     randoMon = random.randint(0, len(monsters)-1)
                     monsterTuple = monsters[randoMon]
                     mob = Boss(monsterTuple[0], monsterTuple[1], int(monsterTuple[2]))
-
-                    n.execute('UPDATE CHARACTERS SET HEALTH = ' + str((name.health - (mob.damage*dun.difficulty)))+ ' WHERE NAME ="' + name.name + '"')
-
+                    horde = random.randint(0,(level*dun.difficulty))
+                    # n.execute('UPDATE CHARACTERS SET HEALTH = ' + str((name.health - (mob.damage*dun.difficulty)))+ ', GOLD = ' + str(horde)+ ' WHERE NAME ="' + name.name + '"')
+                    n.execute('UPDATE CHARACTERS SET HEALTH = ?, GOLD = ? WHERE NAME = ?',(str((name.health - (mob.damage*dun.difficulty))), horde, useName))
                     conn.commit()
                     conn.close()
-
-                    self.menu_manager.write("You slay a " + mob.name + "!\nIt hurt you for " + str((mob.damage*dun.difficulty)) + " damage.")
+                    # self.menu_manager.write("You slay a " + mob.name + " and collect " + str(horde) + " gold! " "It hurt you for " + str((mob.damage*dun.difficulty)) + " damage.")
+                    self.twtr_manager.printTweet("You slay a " + mob.name + " and collect " + str(horde) + " gold! " "It hurt you for " + str((mob.damage*dun.difficulty)) + " damage.")
                 else:
-                    self.menu_manager.write('Level not recognized. Please choose 1, 2, or 3.')
+                    # self.menu_manager.write('Level not recognized. Please choose 1, 2, or 3.')
+                    self.twtr_manager.printTweet('Level not recognized. Please choose 1, 2, or 3.')
                     self.dungeon_pick(name)
 
             except:
-                self.menu_manager.write('Level not recognized. Please choose 1, 2, or 3.')
+                self.twtr_manager.printTweet('Level not recognized. Please choose Easy, Medium or Hard.')
+                # self.menu_manager.write('Level not recognized. Please choose Easy, Medium or Hard.')
                 self.dungeon_pick(name)
 
 
@@ -254,12 +277,24 @@ class GameManager:
             if 0 <= player_number <= (len(chars) - 1):
                 return chars[player_number]
             else:
-                self.menu_manager.write(str(player_number))
-                self.menu_manager.write('\nCharacter not recognized. Please try again.\n')
+                # self.menu_manager.write(str(player_number))
+                # self.menu_manager.write('\nCharacter not recognized. Please try again.\n')
+                self.twtr_manager.printTweet(str(player_number))
+                self.twtr_manager.printTweet('Character not recognized. Please try again.')
                 self.player_game()
 
         except:
-            self.menu_manager.write(str(player_number))
-            self.menu_manager.write('\nCharacter not recognized. Please try again.\n')
+            # self.menu_manager.write(str(player_number))
+            # self.menu_manager.write('\nCharacter not recognized. Please try again.\n')
+            self.twtr_manager.printTweet(str(player_number))
+            self.twtr_manager.printTweet('Character not recognized. Please try again.')
             self.player_game()
 
+    def selectCurrentUser(self):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        p = conn.cursor()
+        p.execute("SELECT USERNAME FROM PLAYERS")
+        getUser = p.fetchall()
+        userName = getUser[0][0]
+        conn.close()
+        return userName

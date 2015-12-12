@@ -67,7 +67,9 @@ class twtrManager:
         #     pass
 
         # self.mainMenu(ckey,csecret,atoken,asecret,auth,api)
-        self.db_manager.storeTweets("name", "text", 1)
+        date = datetime;
+        print date
+        self.db_manager.storeTweets("name", "1", date)
 
     def printTweet(self,text): #Works perfectly!
         ckey = 'rlee33vXmHIlmR5tQljIX0ucD'
@@ -79,7 +81,9 @@ class twtrManager:
         api = tweepy.API(auth)
         auth = OAuthHandler(ckey, csecret)
 
-        api.update_status(text)
+        # api.update_status(text)
+        print "demo!"
+        print text
         return
 
     def executeSomething(self):

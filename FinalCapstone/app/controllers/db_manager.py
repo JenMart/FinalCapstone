@@ -65,8 +65,8 @@ class DatabaseManager:
         )"""
         players = """ CREATE TABLE PLAYERS (
             USERNAME VARCHAR(255) NOT NULL,
-                CHARNAME VARCHAR(255) NOT NULL,
-                STEP INT NOT NULL )"""
+                STEP VARCHAR(255) NOT NULL,
+                DATESTAMP NUMERIC NOT NULL )"""
 
         # playerActions = """ CREATE TABLE PLAYERACTIONS (
         #         USERNAME VARCHAR(255) NOT NULL,
@@ -107,12 +107,12 @@ class DatabaseManager:
             print ("Add " + dungeonname[d] + " to database")
             c.execute("INSERT INTO DUNGEONS VALUES (?,?,?)", (dungeonname[d], theme[d], difficulty[d]))
 
-        charname = ['Laura', 'Rom', 'Jen']
-        job = ['Warrior', 'Warrior', 'Warrior']
-        health = [100, 100, 100]
-        for a in range(len(charname)):
-            print ("Add " + charname[a] + " to database")
-            c.execute("INSERT INTO CHARACTERS VALUES (?,?,?)", (charname[a], job[a], health[a]))
+        # charname = ['Laura', 'Rom', 'Jen']
+        # job = ['Warrior', 'Warrior', 'Warrior']
+        # health = [100, 100, 100]
+        # for a in range(len(charname)):
+        #     print ("Add " + charname[a] + " to database")
+        #     c.execute("INSERT INTO CHARACTERS VALUES (?,?,?)", (charname[a], job[a], health[a]))
 
         conn.commit()
         conn.close()
@@ -126,17 +126,18 @@ class DatabaseManager:
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
 
-        check = self.checkUser(name)
-        c.execute("DROP TABLE CHARACTERS")
-        char = """ CREATE TABLE CHARACTERS (
-            PLAYER VARCHAR(255) NOT NULL,
-            NAME VARCHAR(255) NOT NULL,
-            JOB VARCHAR(255) NOT NULL,
-            HEALTH INT NOT NULL,
-            GOLD INT NOT NULL
-
-        )"""
-        c.execute(char)
+        # check = self.checkUser(name)
+        # c.execute("DROP TABLE CHARACTERS")
+        # char = """ CREATE TABLE CHARACTERS (
+        #     PLAYER VARCHAR(255) NOT NULL,
+        #     NAME VARCHAR(255) NOT NULL,
+        #     JOB VARCHAR(255) NOT NULL,
+        #     HEALTH INT NOT NULL,
+        #     GOLD INT NOT NULL
+        #
+        # )"""
+        # c.execute(char)
+        # self.seed()
         print("Adding user data to Database")
         c.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
 
@@ -164,13 +165,13 @@ class DatabaseManager:
 
         t.execute("SELECT * FROM PLAYERS")
         tweets = t.fetchall()
-        twt = tweets[0]
+        twt = tweets[0][1]
 
         conn.commit()
         conn.close()
 
-        print(twt[2])
-        return twt[2]
+        print(twt)
+        return twt
 
     def checkTweets(self, name, text):
         conn = sqlite3.connect('DunSuciRun.sqlite')
@@ -190,7 +191,7 @@ class DatabaseManager:
         tweets = t.fetchall()
         conn.commit()
         conn.close()
-        if len(tweets) > 1:
+        if len(tweets) > 1: #If user exists
             return True
         else:
             return True

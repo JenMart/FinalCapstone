@@ -59,8 +59,9 @@ class MenuManager:
         #    /(_/(//)(/(-()/) __)(//( /(/(-  / ( (//)
         #           _/                                """
 
-        print """Thank you for playing Dungeon Sucide Run"""
-        self.divider()
+        # print """Thank you for playing Dungeon Sucide Run"""
+        self.twtr_manager.printTweet("""Thank you for playing Dungeon Sucide Run""")
+        # self.divider()
         self.menu('main_menu', True)
 
     #
@@ -68,23 +69,23 @@ class MenuManager:
     #
     def title(self, title):
         print "\n" + title.center(60, ' ')
-        self.divider()
+        # self.divider()
 
     #
     #   Prints a divider line.
     #
-    def divider(self):
-        print "______________________________________________".center(60, ' ') + '\n'
+    # def divider(self):
+    #     print "______________________________________________".center(60, ' ') + '\n'
 
     #
     #   Prints a line of text, wrapped to 60 columns and optionally centered.
     #
-    def write(self, message, centered=False):
-        message = self.wrap(message, 60)
-        if centered:
-            print message.center(60, ' ')
-        else:
-            print message
+    # def write(self, message, centered=False):
+    #     message = self.wrap(message, 60)
+    #     if centered:
+    #         print message.center(60, ' ')
+    #     else:
+    #         print message
 
     #
     #   Wraps text for display.
@@ -128,7 +129,8 @@ class MenuManager:
     #
     def prompt(self, menu):
         while True:        
-            self.write("\nEnter the number that corresponds with your choice.")
+            # self.write("\nEnter the number that corresponds with your choice.")
+            self.twtr_manager.printTweet("Enter the number that corresponds with your choice.")
             choice = self.db_manager.popTweets()
             try:
                 int(choice)
@@ -144,8 +146,9 @@ class MenuManager:
     #   Prompts the user to press enter to continue. Call this when you have text the user needs to read.
     #
     def continue_prompt(self):
-        self.write("\nPress enter to continue ...\n")
-        raw_input()
+        self.twtr_manager.printTweet('And so your adventure continues...')
+        # self.write("\nPress enter to continue ...\n")
+        # raw_input()
 
     #
     #   Takes user input from a prompt() and calls the appropriate action in the GameManager.
