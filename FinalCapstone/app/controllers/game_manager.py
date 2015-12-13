@@ -136,8 +136,8 @@ class GameManager:
     #   Graveyard
     #
     def scoreboard(self):
-        self.printTweet(self.menu_manager.title('Scoreboard'))
-        self.printTweet(self.menu_manager.menu('scoreboard_menu'))
+        self.twtr_manager.printTweet(self.menu_manager.title('Scoreboard'))
+        self.twtr_manager.printTweet(self.menu_manager.menu('scoreboard_menu'))
         self.menu_manager.title_screen()
 
     def get_report_list(self):
@@ -152,47 +152,48 @@ class GameManager:
         conn.close()
         return chars
 
-    def reporting(self):
-        chars = self.get_report_list()
-        self.menu_manager.title('View Scoreboard')
-        for i in range(len(chars)):
-            self.menu_manager.write(chars[i].numbered_stats(i+1))
+    # def reporting(self):
+    #     chars = self.get_report_list()
+    #     self.menu_manager.title('View Scoreboard')
+    #     for i in range(len(chars)):
+    #         self.menu_manager.write(chars[i].numbered_stats(i+1))
+    #
+    #
+    #     self.menu_manager.continue_prompt()
 
 
-        self.menu_manager.continue_prompt()
-
-
-    def reporting_save(self):
-        chars = self.get_report_list()
-        self.menu_manager.title('Download Scoreboard')
-
-        try:
-            filename = input('Please enter a filename to save to (e.g. "reporting.txt"): ')
-            f = open(filename, 'w')
-
-            f.write('----- Dungeon Suicide Run ------\n\n')
-
-            for i in range(len(chars)):
-                f.write(chars[i].numbered_stats(i+1))
-                f.write('\n')
-
-            f.close()
-            self.menu_manager.write('Report has been written to: ' + str(filename))
-            self.menu_manager.continue_prompt()
-
-        except:
-            self.reporting_save()
+    # def reporting_save(self):
+    #     chars = self.get_report_list()
+    #     self.menu_manager.title('Download Scoreboard')
+    #
+    #     try:
+    #         filename = input('Please enter a filename to save to (e.g. "reporting.txt"): ')
+    #         f = open(filename, 'w')
+    #
+    #         f.write('----- Dungeon Suicide Run ------\n\n')
+    #
+    #         for i in range(len(chars)):
+    #             f.write(chars[i].numbered_stats(i+1))
+    #             f.write('\n')
+    #
+    #         f.close()
+    #         self.menu_manager.write('Report has been written to: ' + str(filename))
+    #         self.menu_manager.continue_prompt()
+    #
+    #     except:
+    #         self.reporting_save()
 
     #
     #   Instructions
     #
     def instructions(self):
-        self.menu_manager.title('Instructions')
-        self.menu_manager.write("This game is about running through as many dungeons as you can before dying.\nTo start a new character Press"+
-            " 1 and then decide what level of dungeon to run. Level is 1 is easy, 2 is medium, and 3 is hard.\nIf you wish to use an"+
-            " existing character, press two. Then select which character you want to play with.\nReminder: each time you encounter a monster"+
-            " you will take damage. When you select a character they will have some health already depleated.\nChoose your character and"+
-            " dungeon level wisely!\nTo see current characters and their stats press 3.")
+        # self.menu_manager.title('Instructions')
+        # self.menu_manager.write("This game is about running through as many dungeons as you can before dying.\nTo start a new character Press"+
+        #     " 1 and then decide what level of dungeon to run. Level is 1 is easy, 2 is medium, and 3 is hard.\nIf you wish to use an"+
+        #     " existing character, press two. Then select which character you want to play with.\nReminder: each time you encounter a monster"+
+        #     " you will take damage. When you select a character they will have some health already depleated.\nChoose your character and"+
+        #     " dungeon level wisely!\nTo see current characters and their stats press 3.")
+        self.twtr_manager.printTweet('You are an adventurer tasked with rid the world of evil. There is no rest. Every battle brings you closer to death.')
 
         self.menu_manager.continue_prompt()
         self.menu_manager.title_screen()
@@ -212,7 +213,10 @@ class GameManager:
 
             try:
                 self.menu_manager.title(name.name)
-                level = raw_input("What level of dungeon would you like? (Easy, Medium or Hard)\n").lower()
+                # level = raw_input("What level of dungeon would you like? (Easy, Medium or Hard)\n").lower()
+                self.twtr_manager.printTweet("What level of dungeon would you like? (Easy, Medium or Hard)")
+                level = self.twtr_manager.main()
+                level = level.lower()
                 print "You selected: " + level
                 self.printTweet("You selected: " + level)
                 if "easy" in level:
@@ -271,7 +275,10 @@ class GameManager:
             self.menu_manager.write(chars[i].numbered_stats(i + 1))
 
         try:
-            player_number = input("\nType the number of the character you would like to play: ")
+
+            # player_number = input("\nType the number of the character you would like to play: ")
+            self.twtr_manager.printTweet("Type the number of the character you would like to play")
+            player_number = self.twtr_manager.main()
             player_number = int(player_number) - 1
 
             if 0 <= player_number <= (len(chars) - 1):

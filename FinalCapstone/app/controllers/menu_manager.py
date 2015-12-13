@@ -131,7 +131,8 @@ class MenuManager:
         while True:        
             # self.write("\nEnter the number that corresponds with your choice.")
             self.twtr_manager.printTweet("Enter the number that corresponds with your choice.")
-            choice = self.db_manager.popTweets()
+            # choice = self.db_manager.popTweets()
+            choice = self.twtr_manager.homeTimeline()
             try:
                 int(choice)
                 self.menus[menu][int(choice) - 1]

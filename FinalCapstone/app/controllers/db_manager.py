@@ -66,7 +66,7 @@ class DatabaseManager:
         players = """ CREATE TABLE PLAYERS (
             USERNAME VARCHAR(255) NOT NULL,
                 STEP VARCHAR(255) NOT NULL,
-                DATESTAMP NUMERIC NOT NULL )"""
+                DATESTAMP VARCHAR(255) NOT NULL )"""
 
         # playerActions = """ CREATE TABLE PLAYERACTIONS (
         #         USERNAME VARCHAR(255) NOT NULL,
@@ -139,13 +139,13 @@ class DatabaseManager:
         # c.execute(char)
         # self.seed()
         print("Adding user data to Database")
-        c.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
+        # c.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
 
         # if (check):
         #     print "New Character!"
         #     self.game_manager.char_creation()
 
-        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name, text, 1))
+        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name,text,date))
 
 
         # c.execute("SELECT * FROM PLAYERS")
@@ -158,6 +158,7 @@ class DatabaseManager:
         #     # t.talk()
         conn.commit()
         conn.close()
+        return
 
     def popTweets(self):
         conn = sqlite3.connect('DunSuciRun.sqlite')
@@ -173,14 +174,21 @@ class DatabaseManager:
         print(twt)
         return twt
 
-    def checkTweets(self, name, text):
+    def checkTweets(self, name, text, date):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         t = conn.cursor()
-        t.execute("SELECT * FROM PLAYERS WHERE USERNAME = " + name + "AND COMMAND = " + text)
+        # t.execute(""" DROP TABLE PLAYERS""" )
+        # t.execute(""" CREATE TABLE PLAYERS (
+        #     USERNAME VARCHAR(255) NOT NULL,
+        #         STEP VARCHAR(255) NOT NULL,
+        #         DATESTAMP VARCHAR(255) NOT NULL )""")
+        n = str(name)
+        # t.execute("""DELETE FROM PLAYERS""")
+        t.execute("""SELECT * FROM PLAYERS WHERE USERNAME = ? AND STEP = ? AND DATESTAMP = ?""", (name, text, str(date)))
         tweets = t.fetchall()
         conn.commit()
         conn.close()
-        if len(tweets) > 1:
+        if len(tweets) < 1:
             return True
         else:
             return False
