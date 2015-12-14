@@ -68,11 +68,6 @@ class DatabaseManager:
                 STEP VARCHAR(255) NOT NULL,
                 DATESTAMP VARCHAR(255) NOT NULL )"""
 
-        # playerActions = """ CREATE TABLE PLAYERACTIONS (
-        #         USERNAME VARCHAR(255) NOT NULL,
-        #         COMMAND VARCHAR(255) NOT NULL,
-        #         DATETIME INT NOT NULL )"""
-
         c.execute(char)
         c.execute(dungeons)
         c.execute(bosses)
@@ -107,12 +102,6 @@ class DatabaseManager:
             print ("Add " + dungeonname[d] + " to database")
             c.execute("INSERT INTO DUNGEONS VALUES (?,?,?)", (dungeonname[d], theme[d], difficulty[d]))
 
-        # charname = ['Laura', 'Rom', 'Jen']
-        # job = ['Warrior', 'Warrior', 'Warrior']
-        # health = [100, 100, 100]
-        # for a in range(len(charname)):
-        #     print ("Add " + charname[a] + " to database")
-        #     c.execute("INSERT INTO CHARACTERS VALUES (?,?,?)", (charname[a], job[a], health[a]))
 
         conn.commit()
         conn.close()
@@ -125,64 +114,16 @@ class DatabaseManager:
     def storeTweets(self,name,text,date):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
-
-        # check = self.checkUser(name)
-        # c.execute("DROP TABLE CHARACTERS")
-        # char = """ CREATE TABLE CHARACTERS (
-        #     PLAYER VARCHAR(255) NOT NULL,
-        #     NAME VARCHAR(255) NOT NULL,
-        #     JOB VARCHAR(255) NOT NULL,
-        #     HEALTH INT NOT NULL,
-        #     GOLD INT NOT NULL
-        #
-        # )"""
-        # c.execute(char)
-        # self.seed()
         print("Adding user data to Database")
-        # c.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
-
-        # if (check):
-        #     print "New Character!"
-        #     self.game_manager.char_creation()
-
         c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name,text,date))
-
-
-        # c.execute("SELECT * FROM PLAYERS")
-        # tweets = c.fetchall()
-        # print("hell2o")
-        # for tweet in tweets:
-        #     print("hell3o")
-        #     print(tweet)
-        #     # t = tweet(tweet[0], tweet[1], tweet[2])
-        #     # t.talk()
         conn.commit()
         conn.close()
         return
 
-    # def popTweets(self):
-    #     conn = sqlite3.connect('DunSuciRun.sqlite')
-    #     t = conn.cursor()
-    #
-    #     t.execute("SELECT * FROM PLAYERS")
-    #     tweets = t.fetchall()
-    #     twt = tweets[0][1]
-    #
-    #     conn.commit()
-    #     conn.close()
-    #
-    #     print(twt)
-    #     return twt
-
     def checkTweets(self, name, text, date):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         t = conn.cursor()
-        # t.execute(""" DROP TABLE PLAYERS""" )
-        # t.execute(""" CREATE TABLE PLAYERS (
-        #     USERNAME VARCHAR(255) NOT NULL,
-        #         STEP VARCHAR(255) NOT NULL,
-        #         DATESTAMP VARCHAR(255) NOT NULL )""")
-        # t.execute("""DELETE FROM PLAYERS""")
+        t.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
         t.execute("""SELECT * FROM PLAYERS WHERE USERNAME = ? AND STEP = ? AND DATESTAMP = ?""", (name, text, str(date)))
         tweets = t.fetchall()
         conn.commit()
@@ -191,17 +132,6 @@ class DatabaseManager:
             return True
         else:
             return False
-    # def checkUser(self, name):
-    #     conn = sqlite3.connect('DunSuciRun.sqlite')
-    #     t = conn.cursor()
-    #     t.execute("SELECT * FROM PLAYERS WHERE USERNAME =? ", (name,))
-    #     tweets = t.fetchall()
-    #     conn.commit()
-    #     conn.close()
-    #     if len(tweets) > 1: #If user exists
-    #         return True
-    #     else:
-    #         return True
     def test(self):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()

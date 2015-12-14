@@ -35,29 +35,19 @@ class MenuManager:
     def __init__(self, game_manager):
         self.game_manager = game_manager
         self.db_manager= DatabaseManager(self)
-        self.twtr_manager = twtrManager()
+        self.twtr_manager = twtrManager() #removed some options.
         self.menus = {
             'main_menu': [
                 ('New Game',        'new_game'), 
                 ('Continue',        'continue_game'),
                 ('About',    'about')],
-            'scoreboard_menu': [
+            'scoreboard_menu': [ #Keeping this for future use.
                 ('View Scoreboard', 'reporting'),
                 ('Download Scoreboard', 'reporting_save')
             ]
         }
 
-    #
-    #   Prints a pretty title screen graphic followed by the main menu.
-    #
-    def title_screen(self):
-        # print """
-        #      __               __             __
-        #     /  )    _ _      (    '_ '_/_   /__)
-        #    /(_/(//)(/(-()/) __)(//( /(/(-  / ( (//)
-        #           _/                                """
-
-        # print """Thank you for playing Dungeon Sucide Run"""
+    def title_screen(self): #Most documentation still valid. Only minor changes here.
         self.twtr_manager.printTweet("""Thank you for playing Dungeon Sucide Run""")
         # self.divider()
         self.menu('main_menu', True)
@@ -68,27 +58,6 @@ class MenuManager:
     def title(self, title):
         print "\n" + title.center(60, ' ')
         # self.divider()
-
-    #
-    #   Prints a divider line.
-    #
-    # def divider(self):
-    #     print "______________________________________________".center(60, ' ') + '\n'
-
-    #
-    #   Prints a line of text, wrapped to 60 columns and optionally centered.
-    #
-    # def write(self, message, centered=False):
-    #     message = self.wrap(message, 60)
-    #     if centered:
-    #         print message.center(60, ' ')
-    #     else:
-    #         print message
-
-    #
-    #   Wraps text for display.
-    #   Source: http://code.activestate.com/recipes/148061-one-liner-word-wrap-function/
-    #
     def wrap(self, text, width):
         return reduce(lambda line, word, width=width: '%s%s%s' %
               (line,
@@ -157,8 +126,6 @@ class MenuManager:
     #
     def continue_prompt(self):
         self.twtr_manager.printTweet('And so your adventure continues...')
-        # self.write("\nPress enter to continue ...\n")
-        # raw_input()
 
     #
     #   Takes user input from a prompt() and calls the appropriate action in the GameManager.
